@@ -1,24 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Home from "../src/Components/Views/Home";
+import Jugadores from "./Components/Views/Jugadores";
+import Posiciones from "./Components/Views/Posiciones";
+import Ronda from "./Components/Views/Ronda";
+import Sorteo from "./Components/Views/Sorteo";
+import Loading from "./Components/Pages/Loading";
+import FindMatch from "./Components/Views/FindMatch";
+import Tabla from "./Components/Views/Tabla";
+import CrearJugador from "./Components/Views/CrearJugador";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/cargar" element={<CrearJugador />} />
+        <Route path="/jugadores" element={<Jugadores />} />
+        <Route path="/posiciones" element={<Posiciones />} />
+        <Route path="/puntos" element={<Ronda/>} />
+        <Route path="/sorteo" element={<Tabla/>} />
+        <Route path="/loading" element={< Loading/>} />
+        <Route path="/findMatch" element={< FindMatch/>} />
+      </Routes>
+    </Router>
   );
 }
 
