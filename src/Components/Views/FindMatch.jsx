@@ -34,8 +34,8 @@ const FindMatch = () => {
     }
   }, [status, allTeams, dispatch]); // Añadir dispatch a las dependencias
 
-  const filteredTeams = teams.filter((team) => team.id_round === currentRoundId);
-
+  // const filteredTeams = teams.filter((team) => team.id_round === currentRoundId);
+  const filteredTeams = Array.isArray(teams) ? teams.filter((team) => team.id_round === currentRoundId) : [];
   return (
     <>
       <Navbar />
@@ -51,10 +51,12 @@ const FindMatch = () => {
           margin: "0%",
 
         }}>
+       
 
 
         <div className="grid grid-row"> 
-          <button className="text-xl bold text-white mt-2" onClick={() => navigate("/puntos")}>Cargar Puntos</button>
+      
+          <button className="bg-[#090932] rounded-lg text-red-500 text-xl border border-red-500 mt-2" onClick={() => navigate("/puntos")}> Ronda {currentRoundId} | Cargar Puntos</button>
           <CardsMatch filteredTeams={filteredTeams} />
         </div>
       </div>

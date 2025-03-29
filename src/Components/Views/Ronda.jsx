@@ -51,16 +51,16 @@ const Ronda = () => {
       );
       const points = response.data;
 
-    
+
       const puntos = points.filter(
         (point) => point.id_round === currentRoundId
       );
 
       setPuntos(puntos);
     } catch (err) {
-     console.log("Error Puntos");
-     
-    } 
+      console.log("Error Puntos");
+
+    }
   };
   useEffect(() => {
     fetchPoints();
@@ -89,6 +89,7 @@ const Ronda = () => {
     setSelectedPoints((prevPoints) => ({
       ...prevPoints,
       [playerId]: event.target.value, // Se actualiza solo el jugador correspondiente
+
     }));
   };
 
@@ -96,64 +97,130 @@ const Ronda = () => {
     const confirmCreate = window.confirm(
       "ADVERTENCIA: ¿Está seguro que desea cargar puntos?"
     );
-
-    if (confirmCreate) {
-      const player = players.find((player) => player.id === id);
-      if (!player) {
-        alert("Jugador no encontrado");
-        return;
-      }
-
-      const currentPoints = player.points || 0;
-      const newPoint = Number(selectedPoints[id]);
-
-      if (isNaN(newPoint)) {
-        alert("Seleccione un valor de puntos válido.");
-        return;
-      }
-
-      const totalPoints = currentPoints + newPoint;
-
-      try {
-        const response = await dispatch(crearPoints({
-      id_round: currentRoundId,
-      id_player: id,
-      points: newPoint,
-      totalpoints: totalPoints
-    }));  
-
-    if (crearPoints.fulfilled.match(response)) { 
+  
+    if (!confirmCreate) return;
+  
+    const player = players.find((player) => player.id === id);
+    if (!player) {
+      alert("Jugador no encontrado");
+      return;
+    }
+  
+    const currentPoints = player.points || 0;
+    const newPoint = Number(selectedPoints[id]);
+  
+    if (isNaN(newPoint)) {
+      alert("Seleccione un valor de puntos válido.");
+      return;
+    }
+  
+    const totalPoints = currentPoints + newPoint;
+  
+    try {
+      const response = await dispatch(crearPoints({
+        id_round: currentRoundId,
+        id_player: id,
+        points: newPoint,
+        totalpoints: totalPoints
+      })).unwrap();
+  
+      // Guardar en localStorage correctamente
+      const storedPoints = JSON.parse(localStorage.getItem("points")) || [];
+      storedPoints.push(response);
+      localStorage.setItem("points", JSON.stringify(storedPoints));
+  
       alert("Puntos cargados con éxito");
-      
-      // Si `crearPoints` se ejecutó correctamente, entonces actualizamos al jugador
-      await dispatch(updatePlayers({
-        id: id,
-        points: totalPoints
-      }));
+  
+      // Actualizar el jugador
+      await dispatch(updatePlayers({ id, points: totalPoints }));
+    } catch (error) {
+      console.error("Error al cargar los puntos:", error);
+      alert("Error al cargar los puntos");
     }
-      } catch (error) {
-        console.error("Error al cargar los puntos:", error);
-        alert("Error al cargar los puntos");
-      }
-    }
+    
   };
-
+  
   const handleFinalizeRound = () => {
-    // Verificar si todos los jugadores tienen puntos cargados
-    const pointsLoaded = puntos.filter(point => point.id_round === currentRoundId);
-
-    if (pointsLoaded.length < 6) {
-      alert("⚠️ Advertencia: Debe cargar los puntos de TODOS los jugadores antes de finalizar la ronda.");
+    const playersWithPoints = players.every(player => 
+      puntos.some(point => point.id_player === player.id)
+    );
+  
+    if (!playersWithPoints) {
+      alert("⚠️ Debe cargar los puntos de TODOS los jugadores antes de finalizar la ronda.");
       return;
     }
   
     const confirmFinalize = window.confirm("¿Está seguro de finalizar la ronda?");
-    
     if (confirmFinalize) {
-      dispatch(nextRound()); // Avanza a la siguiente ronda
-      navigate("/sorteo"); 
+      dispatch(nextRound());
+      navigate("/posiciones");
     }
   };
+  // const handleCreatePoint = async (id) => {
+  //   const confirmCreate = window.confirm(
+  //     "ADVERTENCIA: ¿Está seguro que desea cargar puntos?"
+  //   );
+
+  //   if (confirmCreate) {
+  //     const player = players.find((player) => player.id === id);
+  //     if (!player) {
+  //       alert("Jugador no encontrado");
+  //       return;
+  //     }
+
+  //     const currentPoints = player.points || 0;
+  //     const newPoint = Number(selectedPoints[id]);
+
+  //     if (isNaN(newPoint)) {
+  //       alert("Seleccione un valor de puntos válido.");
+  //       return;
+  //     }
+
+  //     const totalPoints = currentPoints + newPoint;
+
+  //     try {
+  //       const response = await dispatch(crearPoints({
+  //         id_round: currentRoundId,
+  //         id_player: id,
+  //         points: newPoint,
+  //         totalpoints: totalPoints
+  //       })).unwrap()
+  //         .then((response) => {
+  //           localStorage.setItem('point', response.point); 
+  //         });
+
+  //       if (crearPoints.fulfilled.match(response)) {
+  //         alert("Puntos cargados con éxito");
+
+  //         // Si `crearPoints` se ejecutó correctamente, entonces actualizamos al jugador
+  //         await dispatch(updatePlayers({
+  //           id: id,
+  //           points: totalPoints
+  //         }));
+  //       }
+  //     } catch (error) {
+  //       console.error("Error al cargar los puntos:", error);
+  //       alert("Error al cargar los puntos");
+  //     }
+  //   }
+  // };
+
+  // const handleFinalizeRound = () => {
+  //   // Verificar si todos los jugadores tienen puntos cargados
+  //   const pointsLoaded = puntos.filter(point => point.id_round === currentRoundId);
+
+  //   if (pointsLoaded.length < 6) {
+  //     alert("⚠️ Advertencia: Debe cargar los puntos de TODOS los jugadores antes de finalizar la ronda.");
+  //     return;
+  //   }
+
+  //   const confirmFinalize = window.confirm("¿Está seguro de finalizar la ronda?");
+
+  //   if (confirmFinalize) {
+  //     dispatch(nextRound()); // Avanza a la siguiente ronda
+  //     navigate("/sorteo");
+  //   }
+  // };
 
   return (
     <>
@@ -246,8 +313,8 @@ const Ronda = () => {
 
                 </form>
               ))}
-       
-             {players
+
+            {players
               .filter((player) => player.id === 3)
               .map((player) => (
                 <form action="" key={player.id} className="flex justify-around m-4">
@@ -276,7 +343,7 @@ const Ronda = () => {
 
                 </form>
               ))}
-       {players
+            {players
               .filter((player) => player.id === 4)
               .map((player) => (
                 <form action="" key={player.id} className="flex justify-around m-4">

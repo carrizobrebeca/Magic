@@ -33,6 +33,7 @@ const CardMatch = ({ playerId, teamId, playerNumber }) => {
   // Filtramos a los jugadores de color "Black"
   const filteredPlayers = players.filter((player) => player.id === playerId);
   // const filteredTeams = teams.filter((team) => team.id === teamId);
+console.log(filteredPlayers);
 
   const playerImages = {
     Black: black,

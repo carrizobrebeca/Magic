@@ -52,7 +52,7 @@ const Jugadores = () => {
         <div className="grid grid-row">
           <Cards />
 
-          <button className="text-xl bold text-white ]" onClick={() => handleCreateTeam(currentRoundId)}> Find Match</button>
+          <button className="bg-[#090932] rounded-lg text-red-500 text-xl bold border border-red-500 mt-2" onClick={() => handleCreateTeam(currentRoundId)}> Find Match</button>
           {/* <button
   className="text-xl font-bold text-white"
   onClick={() => navigate("/loading", { state: { id_round } })}

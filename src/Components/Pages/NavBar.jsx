@@ -24,7 +24,7 @@ const Navbar = () => {
                 <button onClick={() => navigate("/jugadores")} className="pl-4 text-bold text-red-500 border-l border-red-500">
                     Jugadores
                 </button>
-                <button onClick={() => navigate("/sorteo")} className="pl-4 text-bold text-red-500 border-l border-red-500">
+                <button onClick={() => navigate("/findMatch")} className="pl-4 text-bold text-red-500 border-l border-red-500">
                     Sorteo
                 </button>
                 <button onClick={() => navigate("/puntos")} className="pl-4 text-bold text-red-500 border-l border-red-500">

@@ -2,6 +2,7 @@ import React from "react";
 import CardMatch from "./CardMatch";
 
 const CardsMatch = ({ filteredTeams }) => {
+  
   return (
     <div className="grid place-items-center">
       <div className="w-full max-w-[1300px]">
